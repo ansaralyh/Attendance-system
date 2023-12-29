@@ -1,0 +1,238 @@
+body {
+
+    background-color: #F5F5F6;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 18px 20px;
+    max-width: 1211px;
+    height: 75px;
+    margin-top: 59px;
+    background-color: #FFFFFF;
+    border-radius: 8px;
+}
+
+.right-icons {
+    display: flex;
+    gap: 24px;
+}
+
+header p {
+
+    color: #050043;
+    font-family: Poppins;
+    font-size: 25px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.dash {
+    margin-top: 30px;
+    color: #000;
+    font-family: Inter;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.main-counter {
+    display: flex;
+
+    padding-right: 36px;
+    padding-left: 12px;
+
+}
+
+.calender {
+    /* border: 1px solid red; */
+    padding: 15px 15px;
+    background-color: #FFFFFF;
+    width: 509px;
+    border-radius: 12px;
+}
+
+.current-time {
+    /* margin-top: 15px ; */
+    margin: 15px 15px;
+    background: #de940c21;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-radius: 10px;
+    height: 79px;
+    margin-bottom: 35px;
+    /* justify-content: center; */
+}
+
+.time {
+    color: #26344E;
+    font-family: Inter;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.current-day,
+.current-date {
+
+    margin-left: 15px;
+    color: #26344E;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.counters {
+    /* border: 1px solid red; */
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.total-employees {
+    padding: 40px;
+    border-radius: 12px;
+    background-color: #FFFFFF;
+    width: 401px;
+    height: 130px;
+}
+
+.total-number {
+
+    color: #181F4E;
+    font-family: Inter;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.total-head {
+    color: #848BB6;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.attendance-overview {
+    margin-bottom: 60px;
+    padding: 20px 20px;
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    margin-top: 30px;
+    height: auto;
+    width: 1211px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.attendance-header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.attendance-head {
+    color: #666;
+    font-family: Inter;
+    font-size: 22.466px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+
+.search-container input:focus {
+    outline: none;
+}
+
+.search-container input {
+
+    margin-top: 5px;
+    border: none;
+    margin-left: 10.37px;
+}
+
+.search-container {
+    padding-left: 20px;
+
+    border-radius: 6.912px;
+    border: 0.432px solid #B3B3B3;
+    background: #FFF;
+    width: 458.817px;
+    height: 40.189px;
+    flex-shrink: 0;
+}
+
+.filter-calender {
+    display: flex;
+    gap: 11px;
+    justify-content: center;
+    align-items: center;
+    width: 137.386px;
+    height: 40.189px;
+    border-radius: 6.912px;
+    border: 0.432px solid #B3B3B3;
+    background: #FFF;
+}
+
+.filter-date {
+    margin-top: 15px;
+    color: #BBB;
+    font-family: Inter;
+    font-size: 10.369px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.filter-calender img {
+    width: 20px;
+    height: 20px;
+}
+
+.attendance-table{
+    padding: 0 55px;
+}
+
+
+.attendance-table table {
+    width: 100%;
+    height: auto;
+    color: #6C739F;
+    font-family: Inter;
+    font-size: 15.553px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+.attendance-table table thead {
+    width: 100%;
+}
+
+.attendance-table table thead tr {
+    width: 100%;
+}
+.attendance-table table thead tr td {
+    width: 15%;
+    padding: 20px;
+    border-bottom: 1px solid gray;
+}
+
+.attendance-table table tbody tr td {
+    padding: 20px;
+    border-bottom: 1px solid gray;
+}
+
+
+

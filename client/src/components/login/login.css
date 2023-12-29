@@ -1,0 +1,161 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.container1 {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+.form-side {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+}
+
+.facbook-mail {
+    display: flex;
+    gap: 86px;
+}
+
+.mail-icon,
+.facebook-icon {
+    width: 180px;
+    height: 60px;
+    border-radius: 25px;
+    background: #FFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.form-side h1 {
+    color: #000;
+    font-family: Poppins;
+    font-size: 36px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.form-side p {
+    color: rgba(0, 0, 0, 0.50);
+    font-family: Poppins;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.form-side h6 {
+    color: rgba(0, 0, 0, 0.80);
+    font-family: Inter;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.form-side .mail-input {
+    width: 448px;
+    border-radius: 5px;
+    background: #FFF;
+    display: flex;
+    padding: 10px 7px;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.mail-input input {
+    color: rgba(102, 102, 102, 0.50);
+    font-family: 'poppins';
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    border: none;
+    outline: none;
+    padding: 10px;
+}
+
+.forget-password {
+    display: flex;
+    justify-content: space-between;
+    width: 448px;
+    color: rgba(0, 0, 0, 0.50);
+    font-family: 'poppins';
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    align-items: center;
+}
+
+.forget-password .check-box {
+    display: flex;
+    gap: 10px;
+}
+
+.forget-password a {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.50);
+
+}
+
+.forget-password a:hover {
+    color: blue;
+}
+
+.form-side button {
+    width: 448px;
+    height: 41.875px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #666;
+    color: #FFF;
+    font-family: 'poppins';
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    border: none;
+    }
+.form-side h5 {
+    color: rgba(0, 0, 0, 0.80);
+    font-family: 'poppins';
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.form-side h5 a {
+    color: rgba(0, 0, 0, 0.80);
+    font-family: 'poppins';
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    text-decoration: none;
+}
+
+.form-side h5 a:hover {
+    color: blue;
+}
+
+.form-image {
+    width: 50%;
+    height: 100%;
+}
+
+.form-image img {
+    width: 100%;
+    height: 100%;
+}
