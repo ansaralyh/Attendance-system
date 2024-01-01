@@ -2,10 +2,24 @@ body {
 
     background-color: #F5F5F6;
 }
+ /* .buttons 
+    display: grid;
+   justify-content: center;
+    margin-top: 20px;
+    Margin-left: 30px;
+    background-color: white;
+    width: 60px;
+    height: 40px;
+    
+} */
+ 
 
 
 
 
+
+
+  
 
 header {
     display: flex;
@@ -15,7 +29,7 @@ header {
     height: 75px;
     margin-top: 59px;
     background-color: #FFFFFF;
-    border-radius: 8px;
+   
 }
 
 .right-icons {
@@ -44,8 +58,7 @@ header p {
 }
 
 .main-counter {
-    display: flex;
-
+   display: flex;
     padding-right: 36px;
     padding-left: 12px;
 
@@ -56,11 +69,12 @@ header p {
     padding: 15px 15px;
     background-color: #FFFFFF;
     width: 509px;
-    border-radius: 12px;
+
 }
 
+
 .current-time {
-    /* margin-top: 15px ; */
+    margin-top: 15px ;
     margin: 15px 15px;
     background: #de940c21;
     display: flex;
