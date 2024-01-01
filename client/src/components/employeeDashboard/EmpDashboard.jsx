@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
-import './emp.css'
+import './emp.css';
+import 'bootstrap/dist/css/bootstrap.css';
 
 const Admin = () => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
@@ -43,26 +44,12 @@ const Admin = () => {
   <p className="current-day">{currentDay}</p>
   <p className="current-date">{formattedDate}</p>
 </div>
-<div className="counters">
-  <div className="total-employees">
-    <p className="total-number">452</p>
-    <p className="total-head">Total employees present</p>
-  </div>
-  <div className="total-employees">
-    <p className="total-number">350</p>
-    <p className="total-head">On time</p>
-  </div>
-  <div className="total-employees">
-    <p className="total-number">300</p>
-    <p className="total-head">Absent</p>
-  </div>
-  <div className="total-employees">
-    <p className="total-number">250</p>
-    <p className="total-head">Late Arrivals</p>
-  </div>
+  <div className="buttons">
+  <button className="btn btn-primary"> Check In </button>
+  <button className=" btn btn-primary"> Check Out </button>
 </div>
 </div>
-        
+
         <div className="attendance-overview">
           <div className="attendance-header">
             <p className="attendance-head">Attendance overview</p>
