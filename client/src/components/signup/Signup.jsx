@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom"; // Corrected import statem
 import './signup.css';
 
 const Signup = () => {
-  const navigate = useNavigate(); // Corrected variable name
+  const navigate = useNavigate(); 
 
   const [formData, setFormData] = useState({
     firstName: "",

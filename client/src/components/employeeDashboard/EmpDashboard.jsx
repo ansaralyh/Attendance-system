@@ -1,8 +1,10 @@
-import React, {useEffect, useState} from "react";
-import './emp.css'
+import React, { useState } from "react";
+
+import 'bootstrap/dist/css/bootstrap.css';
+import "./emp.css";
 
 const Admin = () => {
-  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [currentDateTime] = useState(new Date());
   const daysOfWeek = [
     "Sunday",
     "Monday",
@@ -34,35 +36,21 @@ const Admin = () => {
 
         <p className="dash">Dashboard</p>
 
-        <div className="main-counter">
-<div className="calender">
-  <div className="current-time">
-    <img src="/assets/Vector (7).png" alt="" />
-    <p className="time">{formattedTime}</p>
-  </div>
-  <p className="current-day">{currentDay}</p>
-  <p className="current-date">{formattedDate}</p>
-</div>
-<div className="counters">
-  <div className="total-employees">
-    <p className="total-number">452</p>
-    <p className="total-head">Total employees present</p>
-  </div>
-  <div className="total-employees">
-    <p className="total-number">350</p>
-    <p className="total-head">On time</p>
-  </div>
-  <div className="total-employees">
-    <p className="total-number">300</p>
-    <p className="total-head">Absent</p>
-  </div>
-  <div className="total-employees">
-    <p className="total-number">250</p>
-    <p className="total-head">Late Arrivals</p>
-  </div>
-</div>
-</div>
-        
+        <div className="main-counter empCount">
+          <div className="calender">
+            <div className="current-time">
+              <img src="/assets/Vector (7).png" alt="" />
+              <p className="time">{formattedTime}</p>
+            </div>
+            <p className="current-day">{currentDay}</p>
+            <p className="current-date">{formattedDate}</p>
+          </div>
+          <div className=" buttons">
+          <button className="btn btn-primary">Check in</button>
+          <button className="btn btn-primary">Check out</button>
+          </div>
+        </div>
+
         <div className="attendance-overview">
           <div className="attendance-header">
             <p className="attendance-head">Attendance overview</p>
@@ -89,25 +77,17 @@ const Admin = () => {
                 </tr>
               </thead>
 
-
               <tbody>
- 
-          <tr>
-            <td>123</td>
-            <td>123</td>
-            <td>123</td>
-            <td>123</td>
-            <td>123</td>
-            <td>123</td>
-            <td>123</td>
-          </tr>
-        
-
-</tbody>
-
-
-
-
+                <tr>
+                  <td>123</td>
+                  <td>123</td>
+                  <td>123</td>
+                  <td>123</td>
+                  <td>123</td>
+                  <td>123</td>
+                  <td>123</td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
