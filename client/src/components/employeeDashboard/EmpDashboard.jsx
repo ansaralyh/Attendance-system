@@ -96,8 +96,8 @@ import "bootstrap/dist/css/bootstrap.css";
             <p className="current-date">{formattedDate}</p>
           </div>
           <div className="checkInOut">
-            <button>{handleCheckIn}</button>
-            <button>{handleCheckOut}</button>
+            <button>Check in</button>
+            <button>Check out</button>
           </div>
         </div>
 
