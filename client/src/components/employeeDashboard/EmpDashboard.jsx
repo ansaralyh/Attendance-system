@@ -1,77 +1,123 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./emp.css";
-
 import "bootstrap/dist/css/bootstrap.css";
 
+const EmpDashboard = ({ user }) => {
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  const [currentDay, setCurrentDay] = useState("");
+  const [formattedDate, setFormattedDate] = useState("");
+  const [formattedTime, setFormattedTime] = useState("");
+  const [checkInRecord, setCheckInRecord] = useState();
+  const [singleUserData, setSingleUserData] = useState(null);
 
-
-
-  
-  const EmpDashboard = ({ user }) => {
-    const [currentDateTime, setCurrentDateTime] = useState(new Date());
-    const [currentDay, setCurrentDay] = useState("");
-    const [formattedDate, setFormattedDate] = useState("");
-    const [formattedTime, setFormattedTime] = useState("");
-    const [checkInRecord, setCheckInRecord] = useState();
-  
-    useEffect(() => {
-      const updateDateTime = () => {
-        const daysOfWeek = [
-          "Sunday",
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-        ];
-        setCurrentDay(daysOfWeek[currentDateTime.getDay()]);
-        setFormattedDate(currentDateTime.toLocaleDateString());
-        setFormattedTime(
-          currentDateTime.toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })
-        );
-      };
-  
-      const intervalId = setInterval(() => {
-        setCurrentDateTime(new Date());
-        updateDateTime();
-      }, 1000);
-  
+  useEffect(() => {
+    const updateDateTime = () => {
+      const daysOfWeek = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+      ];
+      setCurrentDay(daysOfWeek[currentDateTime.getDay()]);
+      setFormattedDate(currentDateTime.toLocaleDateString());
+      setFormattedTime(
+        currentDateTime.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      );
+    };
+    const fetchData = async () => {
+      try {
+        if (user && user.id) {
+          const userId = user.id;
+          const authToken = localStorage.getItem('authToken');
     
-      return () => clearInterval(intervalId);
-    }, [currentDateTime]);
+          // Fetch single user data with authentication token
+          const response = await axios.get(
+            `http://localhost:4000/api/user/getSingleUser/${userId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          );
+    
+          console.log(response.data);
+          setSingleUserData(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        // Handle error, show a notification, etc.
+      }
+    };
+    
   
-    const handleCheckIn = async () => {
-      try {
-        const userId = user.id; 
+    const intervalId = setInterval(() => {
+      setCurrentDateTime(new Date());
+      updateDateTime();
+      fetchData();
+    }, 1000);
+  
+    return () => clearInterval(intervalId);
+  }, [currentDateTime, user]);
+  
+  const handleCheckIn = async () => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      const userId = user && user.id;
+      console.log(userId)
+  
+      if (userId) {
         const response = await axios.post(
-          `http://localhost:4000/api/user/checkIn/${userId}`
+          `http://localhost:4000/api/user/checkIn/${userId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
         );
-        console.log(response.data); 
+        console.log(response.data);
         setCheckInRecord(response.data.checkInRecord);
-      } catch (error) {
-        console.error("Check-in failed:", error);
+      } else {
+        console.error('User or user ID is undefined');
       }
-    };
+    } catch (error) {
+      console.error('Check-in failed:', error);
+      // Handle check-in failure
+    }
+  };
   
-    const handleCheckOut = async () => {
-      try {
-        const userId = user.id; 
+  const handleCheckOut = async () => {
+    try {
+      const authToken = localStorage.getItem('authToken');
+      const userId = user && user.id;
+  
+      if (userId) {
         const response = await axios.post(
-          `http://localhost:4000/api/user/checkOut/${userId}`
+          `http://localhost:4000/api/user/checkOut/${userId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
         );
-        console.log(response.data); // handle response as needed
+        console.log(response.data);
         setCheckInRecord(null);
-      } catch (error) {
-        console.error("Check-out failed:", error);
+      } else {
+        console.error('User or user ID is undefined');
       }
-    };
-  
-  
+    } catch (error) {
+      console.error('Check-out failed:', error);
+      // Handle check-out failure
+    }
+  };
   return (
     <div className="adminDashboard">
       <div className="container">
@@ -96,8 +142,8 @@ import "bootstrap/dist/css/bootstrap.css";
             <p className="current-date">{formattedDate}</p>
           </div>
           <div className="checkInOut">
-            <button>Check in</button>
-            <button>Check out</button>
+            <button onClick={handleCheckIn}>Check In</button>
+            <button onClick={handleCheckOut}>Check Out</button>
           </div>
         </div>
 
@@ -105,7 +151,6 @@ import "bootstrap/dist/css/bootstrap.css";
           <div className="attendance-header">
             <p className="attendance-head">Attendance overview</p>
             <div className="search-container">
-              {/* <CiSearch className="search-icon" /> */}
               <input type="text" placeholder="Search" />
             </div>
             <div className="filter-calender">
@@ -117,26 +162,21 @@ import "bootstrap/dist/css/bootstrap.css";
             <table>
               <thead>
                 <tr>
-                  <td>Id</td>
+                  <td>ID</td>
                   <td>First Name</td>
                   <td>Last Name</td>
-                  <td>Date</td>
-                  <td>Check In</td>
-                  <td>Check Out</td>
-                  <td>Work Hours</td>
+                  <td>Email</td>
                 </tr>
               </thead>
-
               <tbody>
-                <tr>
-                  <td>123</td>
-                  <td>123</td>
-                  <td>123</td>
-                  <td>123</td>
-                  <td>123</td>
-                  <td>123</td>
-                  <td>123</td>
-                </tr>
+                {singleUserData && (
+                  <tr>
+                    <td>{singleUserData._id}</td>
+                    <td>{singleUserData.firstName}</td>
+                    <td>{singleUserData.lastName}</td>
+                    <td>{singleUserData.email}</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
