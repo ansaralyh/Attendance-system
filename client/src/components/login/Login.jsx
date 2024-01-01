@@ -1,15 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import {useSelector,useDispatch} from 'react-redux'
 import "./login.css";
+import { login } from "../../features/auth/loginSlice";
 
 const Login = () => {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+
+  const {loading,error} = useSelector(state => state.auth)
 
   const handleInputChange = (e) => {
     setFormData({
@@ -20,17 +24,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
-    try {
-      const response = await axios.post("http://localhost:4000/api/user/login", formData);
-      alert('User logged in successfully!');
-      navigate('/empDashboard')
-      console.log(response.data);
-
-    } catch (error) {
-      alert('Error during login');
-      console.error(error.response.data);
-    }
+    dispatch(login(formData))
   };
 
   return (
@@ -65,7 +59,7 @@ const Login = () => {
           </div>
           <Link to="/">Forget Password?</Link>
         </div>
-        <button onClick={handleLogin}>Login</button>
+        <button onClick={handleLogin}>{loading?"Loading...":"Sign In"}</button>
         <h5>
           Don’t have an account? <Link to='/signup'>Sign up</Link>
         </h5>

@@ -8,19 +8,20 @@ const initialState = {
 }
 
 
+
 export const authSlice = createSlice({
     name:'auth',
     initialState,
     reducers:{},
     extraReducers:(builder)=>{
-        builder.addCase(signUp.pending,(state)=>{
+        builder.addCase(login.pending,(state)=>{
             state.loading = true
         });
-        builder.addCase(signUp.fulfilled,(state,action)=>{
+        builder.addCase(login.fulfilled,(state,action)=>{
             state.loading = false;
             state.user = action.payload
         });
-        builder.addCase(signUp.rejected,(state,action)=>{
+        builder.addCase(login.rejected,(state,action)=>{
             state.loading = false;
             state.error = action.payload
         })
@@ -28,9 +29,9 @@ export const authSlice = createSlice({
 })
 
 
-export const signUp = createAsyncThunk('signUp',async (apiData,{rejectWithValue})=>{
+export const login = createAsyncThunk('signUp',async (apiData,{rejectWithValue})=>{
     try {
-        const {data} = await axios.post('http://localhost:4000/api/user',apiData)
+        const {data} = await axios.post('http://localhost:4000/api/user/login',apiData)
         return data
     } catch (error) {
         if(error?.response?.data?.message){
