@@ -4,11 +4,11 @@ body {
 }
 
 header {
-    margin-left: 250px;
+    margin-left: 100px;
     display: flex;
     justify-content: space-between;
     padding: 18px 20px;
-    max-width: 1211px;
+    max-width: 1120px;
     height: 75px;
     margin-top: 59px;
     background-color: #FFFFFF;
@@ -31,7 +31,7 @@ header p {
 }
 
 .dash {
-    margin-inline-start: 220px;
+    margin-inline-start: 100px;
     margin-bottom: 20px;
     margin-top: 30px;
     color: #000;
@@ -47,7 +47,7 @@ header p {
     justify-content: center;
 
     padding-right: 36px;
-    padding-left: 112px;
+    padding-left: 100px;
 
 }
 .empCount{
@@ -133,14 +133,14 @@ header p {
 }
 
 .attendance-overview {
-    margin-left: 250px;
+    margin-left: 100px;
     margin-bottom: 60px;
     padding: 20px 20px;
     background-color: #FFFFFF;
     border-radius: 12px;
     margin-top: 30px;
     height: auto;
-    width: 1211px;
+    width: 1120px;
     display: flex;
     flex-direction: column;
     gap: 30px;

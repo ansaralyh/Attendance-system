@@ -6,6 +6,8 @@ import nodemailer from 'nodemailer'
 import crypto from 'crypto'
 import Otp from "../model/otp.model.js";
 import {format, differenceInMinutes, isSameDay } from 'date-fns';
+import Counter from "../model/counter.model.js";
+
 
 dotenv.config()
 const SECRET = process.env.SECRET;
@@ -333,10 +335,77 @@ export const checkOut = async (req, res) => {
 };
 
 
-// Helper function to calculate total hours worked
+//  function to calculate total hours worked
 const calculateTotalHours = (checkInTime, checkOutTime) => {
   const totalMinutesWorked = differenceInMinutes(checkOutTime, checkInTime);
   const hours = Math.floor(totalMinutesWorked / 60);
   const minutes = totalMinutesWorked % 60;
   return hours + minutes / 60;
 };
+
+
+// Count the number of users
+export const countUsers = async (req, res) => {
+  try {
+    const userCount = await User.countDocuments();
+    res.status(200).json({ userCount });
+  } catch (error) {
+    console.error("Error counting users:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+export const getAllCounters = async (req, res) => {
+  try {
+    // Fetch all users
+    const allUsers = await User.find();
+
+    if (!Array.isArray(allUsers)) {
+      return res.status(404).json({ message: "No users found" });
+    }
+
+    
+    let onTimeCount = 0;
+    let lateArrivalCount = 0;
+    let absentCount = 0;
+    allUsers.forEach(user => {
+      if (user.checkInsAndOuts && Array.isArray(user.checkInsAndOuts)) {
+        user.checkInsAndOuts.forEach(checkInOut => {
+          if (checkInOut.totalHours === 0) {
+            // Absent
+            absentCount++;
+          } else if (checkInOut.totalHours > 0 && checkInOut.totalHours <= 9) {
+           
+            onTimeCount++;
+          } else {
+            
+            lateArrivalCount++;
+          }
+        });
+      }
+    });
+
+    
+    const counter = await Counter.findOne(); 
+    if (counter) {
+      counter.onTimeCount = onTimeCount;
+      counter.lateArrivalCount = lateArrivalCount;
+      counter.absentCount = absentCount;
+      await counter.save();
+    } else {
+      await Counter.create({ onTimeCount, lateArrivalCount, absentCount });
+    }
+
+ 
+    res.status(200).json({
+      onTimeCount,
+      lateArrivalCount,
+      absentCount,
+    });
+  } catch (error) {
+    console.error("Error fetching counters:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+

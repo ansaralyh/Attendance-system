@@ -3,7 +3,7 @@ body {
     background-color: #F5F5F6;
 
 }
- /* .buttons 
+ .checInOut {
     display: grid;
    justify-content: center;
     margin-top: 20px;
@@ -12,7 +12,7 @@ body {
     width: 60px;
     height: 40px;
     
-} */
+}
  
 
 
@@ -59,11 +59,13 @@ header p {
     line-height: normal;
 }
 
-.main-counter {
+.main-counter1 {
     display: flex;
-
+    flex-direction: column;
+    gap: 30px;
+    justify-content: flex-start !important;
     padding-right: 36px;
-    padding-left: 12px;
+    padding-left: 102px;
 
 }
 
@@ -109,6 +111,30 @@ header p {
     font-weight: 700;
     line-height: normal;
 }
+
+
+.checkInOut {
+    width: 340px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+.checkInOut button {
+    height: 50px;
+    width: 150px;
+    background-color: #fff;
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    font-family: poppins;
+}
+
+.checkInOut button:hover {
+    background-color: rgb(181, 181, 181);
+    color: #fff;
+}
+
+
 
 .counters {
     /* border: 1px solid red; */

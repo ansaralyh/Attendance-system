@@ -1,25 +1,77 @@
-import React, {useEffect, useState} from "react";
-import './emp.css'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./emp.css";
 
-const Admin = () => {
-  const [currentDateTime] = useState(new Date());
-  const daysOfWeek = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
+import "bootstrap/dist/css/bootstrap.css";
 
-  const currentDay = daysOfWeek[currentDateTime.getDay()];
-  const formattedDate = currentDateTime.toLocaleDateString();
-  const formattedTime = currentDateTime.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
+
+
+  
+  const EmpDashboard = ({ user }) => {
+    const [currentDateTime, setCurrentDateTime] = useState(new Date());
+    const [currentDay, setCurrentDay] = useState("");
+    const [formattedDate, setFormattedDate] = useState("");
+    const [formattedTime, setFormattedTime] = useState("");
+    const [checkInRecord, setCheckInRecord] = useState();
+  
+    useEffect(() => {
+      const updateDateTime = () => {
+        const daysOfWeek = [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ];
+        setCurrentDay(daysOfWeek[currentDateTime.getDay()]);
+        setFormattedDate(currentDateTime.toLocaleDateString());
+        setFormattedTime(
+          currentDateTime.toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })
+        );
+      };
+  
+      const intervalId = setInterval(() => {
+        setCurrentDateTime(new Date());
+        updateDateTime();
+      }, 1000);
+  
+    
+      return () => clearInterval(intervalId);
+    }, [currentDateTime]);
+  
+    const handleCheckIn = async () => {
+      try {
+        const userId = user.id; 
+        const response = await axios.post(
+          `http://localhost:4000/api/user/checkIn/${userId}`
+        );
+        console.log(response.data); 
+        setCheckInRecord(response.data.checkInRecord);
+      } catch (error) {
+        console.error("Check-in failed:", error);
+      }
+    };
+  
+    const handleCheckOut = async () => {
+      try {
+        const userId = user.id; 
+        const response = await axios.post(
+          `http://localhost:4000/api/user/checkOut/${userId}`
+        );
+        console.log(response.data); // handle response as needed
+        setCheckInRecord(null);
+      } catch (error) {
+        console.error("Check-out failed:", error);
+      }
+    };
+  
+  
   return (
     <div className="adminDashboard">
       <div className="container">
@@ -34,35 +86,21 @@ const Admin = () => {
 
         <p className="dash">Dashboard</p>
 
-        <div className="main-counter">
-<div className="calender">
-  <div className="current-time">
-    <img src="/assets/Vector (7).png" alt="" />
-    <p className="time">{formattedTime}</p>
-  </div>
-  <p className="current-day">{currentDay}</p>
-  <p className="current-date">{formattedDate}</p>
-</div>
-<div className="counters">
-  <div className="total-employees">
-    <p className="total-number">452</p>
-    <p className="total-head">Total employees present</p>
-  </div>
-  <div className="total-employees">
-    <p className="total-number">350</p>
-    <p className="total-head">On time</p>
-  </div>
-  <div className="total-employees">
-    <p className="total-number">300</p>
-    <p className="total-head">Absent</p>
-  </div>
-  <div className="total-employees">
-    <p className="total-number">250</p>
-    <p className="total-head">Late Arrivals</p>
-  </div>
-</div>
-</div>
-        
+        <div className="main-counter1">
+          <div className="calender">
+            <div className="current-time">
+              <img src="/assets/Vector (7).png" alt="" />
+              <p className="time">{formattedTime}</p>
+            </div>
+            <p className="current-day">{currentDay}</p>
+            <p className="current-date">{formattedDate}</p>
+          </div>
+          <div className="checkInOut">
+            <button>{handleCheckIn}</button>
+            <button>{handleCheckOut}</button>
+          </div>
+        </div>
+
         <div className="attendance-overview">
           <div className="attendance-header">
             <p className="attendance-head">Attendance overview</p>
@@ -108,4 +146,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default EmpDashboard;

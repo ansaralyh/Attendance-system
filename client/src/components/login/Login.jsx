@@ -24,7 +24,7 @@ const Login = () => {
     try {
       const response = await axios.post("http://localhost:4000/api/user/login", formData);
       alert('User logged in successfully!');
-      navigate('/admin')
+      navigate('/empDashboard')
       console.log(response.data);
 
     } catch (error) {
