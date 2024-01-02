@@ -12,7 +12,17 @@ const initialState = {
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    clearState: (state)=>{
+        state.loading = false ;
+        state.user = null;
+        state.error = null;
+        state.success = false;
+
+
+    }
+  },
+
   extraReducers: (builder) => {
     builder.addCase(login.pending, (state) => {
       state.loading = true;
@@ -47,3 +57,6 @@ export const useLoginRedirect = () => {
   const navigate = useNavigate();
   navigate('/empDashboard');
 };
+
+
+export const  {clearState} = authSlice.actions;

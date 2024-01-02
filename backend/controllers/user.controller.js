@@ -5,7 +5,8 @@ import dotenv from 'dotenv';
 import nodemailer from 'nodemailer'
 import crypto from 'crypto'
 import Otp from "../model/otp.model.js";
-import {format, differenceInMinutes, isSameDay } from 'date-fns';
+import { isSameDay, format, differenceInMinutes } from 'date-fns';
+
 import Counter from "../model/counter.model.js";
 
 
@@ -236,6 +237,7 @@ export const checkIn = async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await User.findById(userId);
+    console.log(user)
 
     if (!user) {
       return res.status(404).json({
@@ -257,16 +259,20 @@ export const checkIn = async (req, res) => {
     const checkInRecord = {
       checkIn: checkInTime,
     };
+    console.log(checkInRecord)
 
-    user.checkInsAndOuts.push(checkInRecord);
+    user.checkinsAndOuts.push(checkInRecord);
+    console.log(user)
     await user.save();
 
     const formattedCheckInTime = format(checkInTime, 'yyyy-MM-dd HH:mm:ss');
+    console.log(formattedCheckInTime)
 
     res.status(200).json({
       message: 'Check-in recorded successfully!',
       checkInRecord: {
         checkIn: formattedCheckInTime,
+        user
       },
     });
   } catch (error) {
@@ -301,7 +307,8 @@ export const checkOut = async (req, res) => {
     }
 
     const checkOutTime = new Date();
-    const retrievedCheckInRecord = user.checkInsAndOuts.pop(); // Retrieve the last check-in record
+    const retrievedCheckInRecord = user.checkinsAndOuts.pop(); // Retrieve the last check-in record
+    console.log('Retrieved Check-In Record:', retrievedCheckInRecord);
 
     if (retrievedCheckInRecord && !retrievedCheckInRecord.checkOut) {
       retrievedCheckInRecord.checkOut = checkOutTime;
@@ -309,6 +316,9 @@ export const checkOut = async (req, res) => {
       // Calculate total hours worked
       const checkInTime = retrievedCheckInRecord.checkIn;
       const totalHoursWorked = calculateTotalHours(checkInTime, checkOutTime);
+      console.log('Check In Time:', checkInTime);
+      console.log('Check Out Time:', checkOutTime);
+      console.log('Total Hours Worked:', totalHoursWorked);
 
       retrievedCheckInRecord.totalHours = totalHoursWorked;
 
@@ -334,6 +344,7 @@ export const checkOut = async (req, res) => {
     });
   }
 };
+
 
 
 //  function to calculate total hours worked

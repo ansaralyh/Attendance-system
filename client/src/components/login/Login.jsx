@@ -13,7 +13,7 @@ const Login = () => {
     password: "",
   });
 
-  const { loading, error, success } = useSelector(state => state.auth);
+  const { loading, error, success, user } = useSelector(state => state.auth);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -28,10 +28,10 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (success) {
+    if (success && user) {
       navigate('/empDashboard');
     }
-  }, [success, navigate,dispatch]);
+  }, [success, user, navigate, dispatch]);
 
   return (
     <div className="container1">

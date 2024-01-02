@@ -27,16 +27,20 @@ const userSchema = mongoose.Schema({
                 type: Date
             },
             checkOut: {
-                type: Date
+                type: Date,
+                default:null
             },
             date: {
-                type: Date
+                type: Date,
+                default:null,
             },
             totalHours: {
-                type: Number
+                type: Number,
+                default:null
             },
             minutes:{
-                type : Number
+                type : Number,
+                default:null
             }
         }
     ]

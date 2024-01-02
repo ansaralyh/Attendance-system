@@ -2,13 +2,22 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./emp.css";
 import "bootstrap/dist/css/bootstrap.css";
-import { useDispatch } from 'react-redux';
-import { useLoginRedirect } from '../../features/auth/loginSlice';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { login } from '../../features/auth/loginSlice';
-// import { useNavigate } from 'react-router-dom';
+import { persistor } from "../../features/store";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
+
+import { useDispatch } from "react-redux";
+// import { useLoginRedirect } from '../../features/auth/loginSlice';
+import { useNavigate } from "react-router-dom";
+import { clearState } from "../../features/auth/loginSlice";
+// // import { useNavigate } from 'react-router-dom';
 
 const EmpDashboard = ({ user }) => {
+  const dispatch = useDispatch();
+  const { success } = useSelector((state) => state.auth);
+  const data = useSelector((state) => state.auth);
+
+  const navigate = useNavigate();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [currentDay, setCurrentDay] = useState("");
   const [formattedDate, setFormattedDate] = useState("");
@@ -16,8 +25,8 @@ const EmpDashboard = ({ user }) => {
   const [checkInRecord, setCheckInRecord] = useState();
   const [singleUserData, setSingleUserData] = useState(null);
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate(); // Get navigate function from React Router
+  // const dispatch = useDispatch();
+  // const navigate = useNavigate(); // Get navigate function from React Router
 
   const updateDateTime = () => {
     const daysOfWeek = [
@@ -41,13 +50,13 @@ const EmpDashboard = ({ user }) => {
 
   const fetchData = async () => {
     try {
-      if (user && user.id) {
-        const userId = user.id;
-        const authToken = localStorage.getItem('token');
-
-        // Fetch single user data with authentication token
+      // if (user && user.id) {
+        const authToken = data.user.token;
+        const userId = data.user.user._id;
+        
         const response = await axios.get(
           `http://localhost:4000/api/user/getSingleUser/${userId}`,
+          {},
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
@@ -55,19 +64,22 @@ const EmpDashboard = ({ user }) => {
           }
         );
 
-        console.log(response.data);
+       
         setSingleUserData(response.data.data);
-      }
+        console.log(singleUserData)
+      // }
     } catch (error) {
       console.error("Error fetching user:", error);
       // Handle error, show a notification, etc.
     }
   };
-
+  // console.log(data)
   const handleCheckIn = async () => {
     try {
-      const authToken = localStorage.getItem('token');
-      const userId = user && user.id;
+      const authToken = data.user.token;
+      const userId = data.user.user._id;
+      // console.log(userId);
+      // console.log(authToken);
 
       if (userId) {
         const response = await axios.post(
@@ -82,18 +94,18 @@ const EmpDashboard = ({ user }) => {
         console.log(response.data);
         setCheckInRecord(response.data.checkInRecord);
       } else {
-        console.error('User or user ID is undefined');
+        console.error("User or user ID is undefined");
       }
     } catch (error) {
-      console.error('Check-in failed:', error);
+      console.error("Check-in failed:", error);
       // Handle check-in failure
     }
   };
 
   const handleCheckOut = async () => {
     try {
-      const authToken = localStorage.getItem('token');
-      const userId = user && user.id;
+      const authToken = data.user.token;
+      const userId = data.user.user._id;
 
       if (userId) {
         const response = await axios.post(
@@ -106,39 +118,35 @@ const EmpDashboard = ({ user }) => {
           }
         );
         console.log(response.data);
-        setCheckInRecord(null);
+        // setCheckInRecord(null);
       } else {
-        console.error('User or user ID is undefined');
+        console.error("User or user ID is undefined");
       }
     } catch (error) {
-      console.error('Check-out failed:', error);
+      console.error("Check-out failed:", error);
       // Handle check-out failure
     }
   };
 
-  const handleRedirect = () => {
-    navigate('/empDashboard');
-  };
+
 
   useEffect(() => {
-    // Perform login logic here
-    const credentials = { /* your login credentials */ };
-    dispatch(login(credentials)).then(() => {
-      handleRedirect(); // Redirect after successful login
-    }).catch((error) => {
-      // Handle login error
-    });
-  }, [dispatch]);
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentDateTime(new Date());
-      updateDateTime();
       fetchData();
-    }, 1000);
+  },[]);
 
-    return () => clearInterval(intervalId);
-  }, [currentDateTime, user]);
+  const handleLogout = () => {
+    dispatch(clearState());
+  };
+  useEffect(() => {
+    if (!success) {
+      navigate("/");
+    }
+  }, [navigate, success]);
+
+  // useEffect(()=>{
+  //   fetchData();
+  // })
+
   return (
     <div className="adminDashboard">
       <div className="container">
@@ -147,7 +155,10 @@ const EmpDashboard = ({ user }) => {
           <div className="right-icons">
             <img src="/assets/icons8-add-user-50.png" alt="" />
             <img src="/assets/notification-bing.png" alt="" />
-            <img src="/assets/Ellipse 940.png" alt="" />
+            <button className="btn btn-danger" onClick={handleLogout}>
+              Log out
+            </button>
+            {/* <img src="/assets/Ellipse 940.png" alt="" /> */}
           </div>
         </header>
 
@@ -189,6 +200,7 @@ const EmpDashboard = ({ user }) => {
                   <td>Email</td>
                   <td>Check in </td>
                   <td>check out</td>
+                  <td>Work hours</td>
                 </tr>
               </thead>
               <tbody>
@@ -198,8 +210,24 @@ const EmpDashboard = ({ user }) => {
                     <td>{singleUserData.firstName}</td>
                     <td>{singleUserData.lastName}</td>
                     <td>{singleUserData.email}</td>
-                    <td>{singleUserData.handleCheckIn}</td>
-                    <td>{singleUserData.handleCheckOut}</td>
+                    <td>
+                      {singleUserData.checkinsAndOuts &&
+                      singleUserData.checkinsAndOuts.length > 0
+                        ? singleUserData.checkinsAndOuts[0].checkIn
+                        : "N/A"}
+                    </td>
+                    <td>
+                      {singleUserData.checkinsAndOuts &&
+                      singleUserData.checkinsAndOuts.length > 0
+                        ? singleUserData.checkinsAndOuts[0].checkOut
+                        : "N/A"}
+                    </td>
+                    <td>
+                      {singleUserData.checkinsAndOuts &&
+                      singleUserData.checkinsAndOuts.length > 0
+                        ? singleUserData.checkinsAndOuts[0].totalHours
+                        : "N/A"}
+                    </td>
                   </tr>
                 )}
               </tbody>
