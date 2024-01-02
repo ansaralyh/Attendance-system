@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./emp.css";
 import "bootstrap/dist/css/bootstrap.css";
+import { useDispatch } from 'react-redux';
+import { useLoginRedirect } from '../../features/auth/loginSlice';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { login } from '../../features/auth/loginSlice';
+// import { useNavigate } from 'react-router-dom';
 
 const EmpDashboard = ({ user }) => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
@@ -11,67 +16,59 @@ const EmpDashboard = ({ user }) => {
   const [checkInRecord, setCheckInRecord] = useState();
   const [singleUserData, setSingleUserData] = useState(null);
 
-  useEffect(() => {
-    const updateDateTime = () => {
-      const daysOfWeek = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ];
-      setCurrentDay(daysOfWeek[currentDateTime.getDay()]);
-      setFormattedDate(currentDateTime.toLocaleDateString());
-      setFormattedTime(
-        currentDateTime.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      );
-    };
-    const fetchData = async () => {
-      try {
-        if (user && user.id) {
-          const userId = user.id;
-          const authToken = localStorage.getItem('authToken');
-    
-          // Fetch single user data with authentication token
-          const response = await axios.get(
-            `http://localhost:4000/api/user/getSingleUser/${userId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          );
-    
-          console.log(response.data);
-          setSingleUserData(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        // Handle error, show a notification, etc.
+  const dispatch = useDispatch();
+  const navigate = useNavigate(); // Get navigate function from React Router
+
+  const updateDateTime = () => {
+    const daysOfWeek = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    setCurrentDay(daysOfWeek[currentDateTime.getDay()]);
+    setFormattedDate(currentDateTime.toLocaleDateString());
+    setFormattedTime(
+      currentDateTime.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    );
+  };
+
+  const fetchData = async () => {
+    try {
+      if (user && user.id) {
+        const userId = user.id;
+        const authToken = localStorage.getItem('token');
+
+        // Fetch single user data with authentication token
+        const response = await axios.get(
+          `http://localhost:4000/api/user/getSingleUser/${userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
+
+        console.log(response.data);
+        setSingleUserData(response.data.data);
       }
-    };
-    
-  
-    const intervalId = setInterval(() => {
-      setCurrentDateTime(new Date());
-      updateDateTime();
-      fetchData();
-    }, 1000);
-  
-    return () => clearInterval(intervalId);
-  }, [currentDateTime, user]);
-  
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      // Handle error, show a notification, etc.
+    }
+  };
+
   const handleCheckIn = async () => {
     try {
-      const authToken = localStorage.getItem('authToken');
+      const authToken = localStorage.getItem('token');
       const userId = user && user.id;
-      console.log(userId)
-  
+
       if (userId) {
         const response = await axios.post(
           `http://localhost:4000/api/user/checkIn/${userId}`,
@@ -92,12 +89,12 @@ const EmpDashboard = ({ user }) => {
       // Handle check-in failure
     }
   };
-  
+
   const handleCheckOut = async () => {
     try {
-      const authToken = localStorage.getItem('authToken');
+      const authToken = localStorage.getItem('token');
       const userId = user && user.id;
-  
+
       if (userId) {
         const response = await axios.post(
           `http://localhost:4000/api/user/checkOut/${userId}`,
@@ -118,6 +115,30 @@ const EmpDashboard = ({ user }) => {
       // Handle check-out failure
     }
   };
+
+  const handleRedirect = () => {
+    navigate('/empDashboard');
+  };
+
+  useEffect(() => {
+    // Perform login logic here
+    const credentials = { /* your login credentials */ };
+    dispatch(login(credentials)).then(() => {
+      handleRedirect(); // Redirect after successful login
+    }).catch((error) => {
+      // Handle login error
+    });
+  }, [dispatch]);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentDateTime(new Date());
+      updateDateTime();
+      fetchData();
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [currentDateTime, user]);
   return (
     <div className="adminDashboard">
       <div className="container">
@@ -166,6 +187,8 @@ const EmpDashboard = ({ user }) => {
                   <td>First Name</td>
                   <td>Last Name</td>
                   <td>Email</td>
+                  <td>Check in </td>
+                  <td>check out</td>
                 </tr>
               </thead>
               <tbody>
@@ -175,6 +198,8 @@ const EmpDashboard = ({ user }) => {
                     <td>{singleUserData.firstName}</td>
                     <td>{singleUserData.lastName}</td>
                     <td>{singleUserData.email}</td>
+                    <td>{singleUserData.handleCheckIn}</td>
+                    <td>{singleUserData.handleCheckOut}</td>
                   </tr>
                 )}
               </tbody>

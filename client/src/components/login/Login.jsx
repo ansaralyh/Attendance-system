@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
-import {useSelector,useDispatch} from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux';
 import "./login.css";
 import { login } from "../../features/auth/loginSlice";
 
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const {loading,error} = useSelector(state => state.auth)
+  const { loading, error, success } = useSelector(state => state.auth);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -24,8 +24,14 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    dispatch(login(formData))
+    dispatch(login(formData));
   };
+
+  useEffect(() => {
+    if (success) {
+      navigate('/empDashboard');
+    }
+  }, [success, navigate,dispatch]);
 
   return (
     <div className="container1">
@@ -59,7 +65,7 @@ const Login = () => {
           </div>
           <Link to="/">Forget Password?</Link>
         </div>
-        <button onClick={handleLogin}>{loading?"Loading...":"Sign In"}</button>
+        <button onClick={handleLogin}>{loading ? "Loading..." : "Sign In"}</button>
         <h5>
           Don’t have an account? <Link to='/signup'>Sign up</Link>
         </h5>
@@ -73,12 +79,3 @@ const Login = () => {
 };
 
 export default Login;
-
-
-
-
-
-
-
-
-
