@@ -23,6 +23,7 @@ const EmpDashboard = ({ user }) => {
   const [formattedDate, setFormattedDate] = useState("");
   const [formattedTime, setFormattedTime] = useState("");
   const [checkInRecord, setCheckInRecord] = useState();
+  const [checkOutRecord, setCheckOutRecord] = useState();
   const [singleUserData, setSingleUserData] = useState(null);
 
   // const dispatch = useDispatch();
@@ -53,16 +54,15 @@ const EmpDashboard = ({ user }) => {
       // if (user && user.id) {
         const authToken = data.user.token;
         const userId = data.user.user._id;
-        
         const response = await axios.get(
           `http://localhost:4000/api/user/getSingleUser/${userId}`,
-          {},
           {
             headers: {
               Authorization: `Bearer ${authToken}`,
             },
           }
         );
+        console.log(response)
 
        
         setSingleUserData(response.data.data);
@@ -78,8 +78,8 @@ const EmpDashboard = ({ user }) => {
     try {
       const authToken = data.user.token;
       const userId = data.user.user._id;
-      // console.log(userId);
-      // console.log(authToken);
+      console.log(userId);
+      console.log(authToken);
 
       if (userId) {
         const response = await axios.post(
@@ -92,7 +92,7 @@ const EmpDashboard = ({ user }) => {
           }
         );
         console.log(response.data);
-        setCheckInRecord(response.data.checkInRecord);
+        setCheckInRecord(response.data.checkInRecord.checkIn);
       } else {
         console.error("User or user ID is undefined");
       }
@@ -118,6 +118,7 @@ const EmpDashboard = ({ user }) => {
           }
         );
         console.log(response.data);
+        setCheckOutRecord(response.data.checkOutRecord.checkOut);
         // setCheckInRecord(null);
       } else {
         console.error("User or user ID is undefined");
