@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+// import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import "./login.css";
@@ -14,6 +14,8 @@ const Login = () => {
   });
 
   const { loading, error, success, user } = useSelector(state => state.auth);
+  // console.log(success)
+  // console.log(user.user.role)
 
   const handleInputChange = (e) => {
     setFormData({
@@ -26,12 +28,16 @@ const Login = () => {
     e.preventDefault();
     dispatch(login(formData));
   };
-
   useEffect(() => {
-    if (success && user) {
-      navigate('/empDashboard');
+    if (success  && user?.user?.role) {
+      if (user.user.role === "admin") {
+        navigate('/admin');
+      } else {
+        navigate('/empDashboard');
+      }
     }
-  }, [success, user, navigate, dispatch]);
+  }, [success, navigate]);
+  
 
   return (
     <div className="container1">

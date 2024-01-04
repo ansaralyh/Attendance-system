@@ -1,10 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { CiSearch } from "react-icons/ci";
-// import { format } from 'date-fns';
-import './admin.css';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import "./admin.css";
+import 'bootstrap/dist/css/bootstrap.css';
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { clearState } from "../../features/auth/loginSlice";
+import { formatTime, formatWorkDuration } from "../../utills/dates";
 
 const Admin = () => {
+  const dispatch = useDispatch();
+  const { success } = useSelector((state) => state.auth);
+  const data = useSelector((state) => state.auth);
+
+  const navigate = useNavigate();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [users, setUsers] = useState([]);
   const [totalEmployees, setTotalEmployees] = useState(0);
@@ -15,48 +27,66 @@ const Admin = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch user count
-        const responseCount = await fetch("http://localhost:4000/api/user/countUsers");
+        const responseCount = await fetch(
+          "http://localhost:4000/api/admin/countUsers"
+        );
         const dataCount = await responseCount.json();
 
         if (typeof dataCount === "number") {
           setTotalEmployees(dataCount);
         } else {
-          console.error("Invalid user count data format. Expected a number:", dataCount);
+          console.error(
+            "Invalid user count data format. Expected a number:",
+            dataCount
+          );
         }
 
-        // Fetch counters
-        // const responseCounters = await fetch("http://localhost:4000/api/admin/storeAttendanceCounts");
-        // const dataCounters = await responseCounters.json();
+        
+        setOnTimeCount(5);
+        setAbsentCount(2); 
+        setLateArrivalCount(4); 
 
-        // if (dataCounters) {
-        //   setOnTimeCount(dataCounters.onTimeCount);
-        //   setAbsentCount(dataCounters.absentCount);
-        //   setLateArrivalCount(dataCounters.lateArrivalCount);
-        // } else {
-        //   console.error("Invalid counters data format:", dataCounters);
-        // }
+        // Fetch user data
+        const authToken = data.user.token;
+        const responseUsers = await axios.get(
+          "http://localhost:4000/api/admin/getAllusers",
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
 
-        // Fetch all users
-        const responseUsers = await fetch("http://localhost:4000/api/admin/getAllUsers");
-        const dataUsers = await responseUsers.json();
-        console.log(dataUsers)
+        if (responseUsers.status >= 200 && responseUsers.status < 300) {
+          const allUsersData = responseUsers.data;
 
-        if (Array.isArray(dataUsers)) {
-          setUsers(dataUsers);
+          const loggedInUserId = data.user.user._id;
+
+          const usersData = allUsersData.filter(
+            (user) => user._id !== loggedInUserId
+          );
+
+          setUsers(usersData);
+          console.log("All Users data:", usersData);
+
+         
+          setTotalEmployees(usersData.length);
         } else {
-          console.error("Invalid users data format. Expected an array:", dataUsers);
+          console.error(
+            "Error fetching all users. Status:",
+            responseUsers.status
+          );
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
+    fetchData();
+
     const intervalId = setInterval(() => {
       setCurrentDateTime(new Date());
     }, 1000);
-
-    fetchData();
 
     return () => {
       clearInterval(intervalId);
@@ -68,11 +98,15 @@ const Admin = () => {
     const minutes = totalMinutes % 60;
 
     if (hours === 0) {
-      return `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+      return `${minutes} minute${minutes !== 1 ? "s" : ""}`;
     } else if (hours === 1) {
-      return `${hours} hour${minutes !== 0 ? ` and ${minutes} minute${minutes !== 1 ? 's' : ''}` : ''}`;
+      return `${hours} hour${
+        minutes !== 0 ? ` and ${minutes} minute${minutes !== 1 ? "s" : ""}` : ""
+      }`;
     } else {
-      return `${hours} hours${minutes !== 0 ? ` and ${minutes} minute${minutes !== 1 ? 's' : ''}` : ''}`;
+      return `${hours} hours${
+        minutes !== 0 ? ` and ${minutes} minute${minutes !== 1 ? "s" : ""}` : ""
+      }`;
     }
   };
 
@@ -94,11 +128,13 @@ const Admin = () => {
   });
 
   const convertHoursStringToDecimal = (hoursString) => {
-    if (typeof hoursString !== 'string') {
-      return 0; 
+    if (typeof hoursString !== "string") {
+      return 0;
     }
 
-    const match = hoursString.match(/^(\d+(\.\d+)?)\s*hour(s)?(\s+(\d+)\s*minute(s)?)?/);
+    const match = hoursString.match(
+      /^(\d+(\.\d+)?)\s*hour(s)?(\s+(\d+)\s*minute(s)?)?/
+    );
 
     if (match) {
       const hours = parseFloat(match[1]);
@@ -106,22 +142,104 @@ const Admin = () => {
 
       if (!isNaN(hours) && !isNaN(minutes)) {
         const totalMinutes = hours * 60 + minutes;
-        return Math.round(totalMinutes); 
+        return Math.round(totalMinutes);
       }
     }
 
-    return 0; 
+    return 0;
   };
+
+  const handleLogout = () => {
+    dispatch(clearState());
+  };
+
+  const generatePDF = async () => {
+    try {
+      const responseUsers = await axios.get(
+        "http://localhost:4000/api/admin/getAllusers",
+        {
+          headers: {
+            Authorization: `Bearer ${data.user.token}`,
+          },
+        }
+      );
+  
+      if (responseUsers.status >= 200 && responseUsers.status < 300) {
+        const allUsersData = responseUsers.data;
+  
+        const pdf = new jsPDF();
+        pdf.text("Attendance Overview", 20, 20);
+  
+        const headers = [
+          "ID",
+          "First Name",
+          "Last Name",
+          "Date",
+          "Check In",
+          "Check Out",
+          "Work Hours",
+        ];
+        const startY = 30;
+  
+        pdf.autoTable({
+          head: [headers],
+          startY,
+        });
+  
+        for (const user of allUsersData) {
+          for (const checkInOut of user.checkinsAndOuts || []) {
+            const rowData = [
+              user._id,
+              user.firstName,
+              user.lastName,
+              new Date(checkInOut.date).toLocaleDateString(),
+              new Date(checkInOut.checkIn).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+              new Date(checkInOut.checkOut).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+              formatHoursAndMinutesToString(
+                convertHoursStringToDecimal(checkInOut.totalHours)
+              ),
+            ];
+                
+            pdf.autoTable({
+              body: [rowData],
+              startY: pdf.autoTable.previous.finalY,
+            });
+          }
+        }
+  
+        pdf.save("attendance_overview.pdf");
+      } else {
+        console.error("Error fetching all users. Status:", responseUsers.status);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+
+  useEffect(() => {
+    if (!success) {
+      navigate("/");
+    }
+  }, [navigate, success]);
 
   return (
     <div className="adminDashboard">
       <div className="container">
         <header>
-          <p>Time tracker</p>
+        <p>Ideometrix</p>
           <div className="right-icons">
             <img src="/assets/icons8-add-user-50.png" alt="" />
             <img src="/assets/notification-bing.png" alt="" />
-            <img src="/assets/Ellipse 940.png" alt="" />
+            <button className="btn btn-danger" onClick={handleLogout}>
+              Log out
+            </button>
           </div>
         </header>
 
@@ -141,6 +259,7 @@ const Admin = () => {
               <p className="total-number">{totalEmployees}</p>
               <p className="total-head">Total employees present</p>
             </div>
+
             <div className="total-employees">
               <p className="total-number">{onTimeCount}</p>
               <p className="total-head">On time</p>
@@ -164,8 +283,9 @@ const Admin = () => {
               <input type="text" placeholder="Search" />
             </div>
             <div className="filter-calender">
-              <img src="/assets/calendar-search.png" alt="" />
-              <p className="filter-date">29Jun 2023</p>
+              {/* <img src="/assets/calendar-search.png" alt="" /> */}
+              <input type="date" />
+              {/* <p className="filter-date">29Jun 2023</p> */}
             </div>
           </div>
           <div className="attendance-table">
@@ -182,32 +302,44 @@ const Admin = () => {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
+                {users.map((user, index) => (
                   <React.Fragment key={user._id}>
-                    { user.checkInsAndOuts?.length > 0 ? (
-                      user.checkInsAndOuts.map((checkInOut, index) => (
-                        <tr key={`${user._id}_${index}`}>
-                          <td>{user._id}</td>
-                          <td>{user.firstName}</td>
-                          <td>{user.lastName}</td>
-                          <td>{new Date(checkInOut.date).toLocaleDateString()}</td>
-                          <td>{new Date(checkInOut.checkIn).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
-                          <td>{new Date(checkInOut.checkOut).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
-                          <td>{formatHoursAndMinutesToString(convertHoursStringToDecimal(checkInOut.totalHours))}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      <tr key={user._id}>
-                        <td>{user._id}</td>
-                        <td>{user.firstName}</td>
-                        <td>{user.lastName}</td>
-                        <td colSpan="4">No check-ins and check-outs available for this user</td>
-                      </tr>
-                    )}
+                    <tr>
+                      <td>{user._id}</td>
+                      <td>{user.firstName}</td>
+                      <td>{user.lastName}</td>
+                      <td>
+                        {new Date(
+                          user?.checkInsAndOuts[0]?.checkIn
+                        ).toLocaleDateString()}
+                      </td>
+                      <td>
+                        {user?.checkInsAndOuts[0]?.checkIn
+                          ? formatTime(user?.checkInsAndOuts[0]?.checkIn)
+                          : "-"}
+                      </td>
+                      <td>
+                        {user?.checkInsAndOuts[0]?.checkOut
+                          ? formatTime(user?.checkInsAndOuts[0]?.checkOut)
+                          : "-"}
+                      </td>
+                      <td>
+                        {user?.checkInsAndOuts[0]?.checkOut &&
+                        user?.checkInsAndOuts[0]?.checkIn
+                          ? formatWorkDuration(
+                              user?.checkInsAndOuts[0]?.checkIn,
+                              user?.checkInsAndOuts[0]?.checkOut
+                            )
+                          : "-"}
+                      </td>
+                    </tr>
                   </React.Fragment>
                 ))}
               </tbody>
             </table>
+          </div>
+          <div>
+            <button onClick={generatePDF} className="btn btn-primary">Download All PDFs</button>
           </div>
         </div>
       </div>

@@ -231,7 +231,7 @@ export const verifyOtp = async (req, res) => {
   }
 };
 
-// Check-in
+
 // Check-in
 export const checkIn = async (req, res) => {
   try {
@@ -245,7 +245,7 @@ export const checkIn = async (req, res) => {
       });
     }
 
-  
+
     user.checkInsAndOuts = user.checkInsAndOuts || [];
 
     const lastCheckInRecord = user.checkInsAndOuts[user.checkInsAndOuts.length - 1];
@@ -261,9 +261,20 @@ export const checkIn = async (req, res) => {
     };
     console.log(checkInRecord)
 
-    user.checkinsAndOuts.push(checkInRecord);
-    console.log(user)
+
+    if (!user.checkInsAndOuts) {
+      user.checkInsAndOuts = [];
+    }
+
+
+    user.checkInsAndOuts.push(checkInRecord);
+
+
+    console.log(user);
+
+
     await user.save();
+
 
     const formattedCheckInTime = format(checkInTime, 'yyyy-MM-dd HH:mm:ss');
     console.log(formattedCheckInTime)
@@ -295,10 +306,8 @@ export const checkOut = async (req, res) => {
       });
     }
 
-    // Ensure that checkInsAndOuts is initialized
-    user.checkInsAndOuts = user.checkInsAndOuts || [];
 
-    // Check if the user has already checked out today
+    user.checkInsAndOuts = user.checkInsAndOuts || [];
     const lastCheckInRecord = user.checkInsAndOuts[user.checkInsAndOuts.length - 1];
     if (lastCheckInRecord && lastCheckInRecord.checkOut && isSameDay(new Date(), lastCheckInRecord.checkOut)) {
       return res.status(400).json({
@@ -307,13 +316,13 @@ export const checkOut = async (req, res) => {
     }
 
     const checkOutTime = new Date();
-    const retrievedCheckInRecord = user.checkinsAndOuts.pop(); // Retrieve the last check-in record
+    const retrievedCheckInRecord = user.checkInsAndOuts.pop();
     console.log('Retrieved Check-In Record:', retrievedCheckInRecord);
 
     if (retrievedCheckInRecord && !retrievedCheckInRecord.checkOut) {
       retrievedCheckInRecord.checkOut = checkOutTime;
 
-      // Calculate total hours worked
+      // Calculating total hours worked
       const checkInTime = retrievedCheckInRecord.checkIn;
       const totalHoursWorked = calculateTotalHours(checkInTime, checkOutTime);
       console.log('Check In Time:', checkInTime);
@@ -367,57 +376,4 @@ export const countUsers = async (req, res) => {
   }
 };
 
-
-export const getAllCounters = async (req, res) => {
-  try {
-    // Fetch all users
-    const allUsers = await User.find();
-
-    if (!Array.isArray(allUsers)) {
-      return res.status(404).json({ message: "No users found" });
-    }
-
-    
-    let onTimeCount = 0;
-    let lateArrivalCount = 0;
-    let absentCount = 0;
-    allUsers.forEach(user => {
-      if (user.checkInsAndOuts && Array.isArray(user.checkInsAndOuts)) {
-        user.checkInsAndOuts.forEach(checkInOut => {
-          if (checkInOut.totalHours === 0) {
-            // Absent
-            absentCount++;
-          } else if (checkInOut.totalHours > 0 && checkInOut.totalHours <= 9) {
-           
-            onTimeCount++;
-          } else {
-            
-            lateArrivalCount++;
-          }
-        });
-      }
-    });
-
-    
-    const counter = await Counter.findOne(); 
-    if (counter) {
-      counter.onTimeCount = onTimeCount;
-      counter.lateArrivalCount = lateArrivalCount;
-      counter.absentCount = absentCount;
-      await counter.save();
-    } else {
-      await Counter.create({ onTimeCount, lateArrivalCount, absentCount });
-    }
-
- 
-    res.status(200).json({
-      onTimeCount,
-      lateArrivalCount,
-      absentCount,
-    });
-  } catch (error) {
-    console.error("Error fetching counters:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-  }
-};
 

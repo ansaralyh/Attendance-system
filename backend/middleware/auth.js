@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 export const authenticateUser = (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
-
+        // console.log(req.headers)
         if (!authHeader || !authHeader.startsWith('Bearer ')) {
             throw new Error('Authentication failed!');
         }
@@ -23,11 +23,13 @@ export const authenticateUser = (req, res, next) => {
         res.status(401).json({ message: 'Authentication failed' });
     }
 };
-export const checkUserRole = (role) => {
+export const checkUserRole = (roles) => {
     return (req, res, next) => {
         const userRole = req.user && req.user.userRole;
 
-        if (role.includes(userRole)) {
+        if (Array.isArray(roles) && roles.includes(userRole)) {
+            next();
+        } else if (typeof roles === 'string' && roles === userRole) {
             next();
         } else {
             res.status(403).json({
@@ -36,5 +38,6 @@ export const checkUserRole = (role) => {
         }
     };
 };
+
 
 

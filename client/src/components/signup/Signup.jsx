@@ -12,6 +12,7 @@ const Signup = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    role:""
   });
 
   const handleInputChange = (e) => {
@@ -70,6 +71,16 @@ const Signup = () => {
                   placeholder="Enter your Email"
                   name="email"
                   value={formData.email}
+                  onChange={handleInputChange}
+                />
+                <img src="/assets/mail-open-outline.png" alt="" />
+              </div>
+              <div className="input-icon">
+                <input
+                  type="text"
+                  placeholder="Enter your role"
+                  name="role"
+                  value={formData.role}
                   onChange={handleInputChange}
                 />
                 <img src="/assets/mail-open-outline.png" alt="" />

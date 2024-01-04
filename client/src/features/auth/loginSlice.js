@@ -52,7 +52,7 @@ export const login = createAsyncThunk('signUp', async (apiData, { rejectWithValu
   }
 });
 
-// Outside the slice, handle redirection
+
 export const useLoginRedirect = () => {
   const navigate = useNavigate();
   navigate('/empDashboard');
