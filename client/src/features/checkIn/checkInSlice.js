@@ -19,7 +19,7 @@ export const checkInSlice = createSlice({
     name: 'CheckIn',
     initialState,
     reducers: {
-
+            
     },
     extraReducers: (builder) => {
         builder.addCase(addCheckIn.pending, (state) => {
