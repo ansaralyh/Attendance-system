@@ -237,7 +237,7 @@ export const checkIn = async (req, res) => {
   try {
     const userId = req.params.id;
     const user = await User.findById(userId);
-    console.log(user)
+    // console.log(user)
 
     if (!user) {
       return res.status(404).json({
@@ -259,7 +259,7 @@ export const checkIn = async (req, res) => {
     const checkInRecord = {
       checkIn: checkInTime,
     };
-    console.log(checkInRecord)
+    // console.log(checkInRecord)
 
 
     if (!user.checkInsAndOuts) {
@@ -270,7 +270,7 @@ export const checkIn = async (req, res) => {
     user.checkInsAndOuts.push(checkInRecord);
 
 
-    console.log(user);
+    // console.log(user);
 
 
     await user.save();

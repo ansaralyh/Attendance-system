@@ -20,7 +20,7 @@ app.use("/api", router)
 app.use('/api',imageRoute)
 
 // Database connection 
-mongoose.connect("mongodb://127.0.0.1:27017/ideometrix"
+mongoose.connect("mongodb://127.0.0.1:27017/Haaza-FYP"
 ).then(() => {
     console.log("connected to database");
 })

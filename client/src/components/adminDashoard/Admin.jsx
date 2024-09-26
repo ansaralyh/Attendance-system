@@ -233,7 +233,7 @@ const Admin = () => {
     <div className="adminDashboard">
       <div className="container">
         <header>
-        <p>Ideometrix</p>
+        <p>Karakorum International University</p>
           <div className="right-icons">
             <img src="/assets/icons8-add-user-50.png" alt="" />
             <img src="/assets/notification-bing.png" alt="" />
