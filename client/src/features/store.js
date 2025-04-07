@@ -9,12 +9,17 @@ const persistConfig = {
     storage
 }
 
-
 export const store = configureStore({
     reducer: {
         auth: persistReducer(persistConfig, authSlice.reducer),
         checkInOut: checkInSlice.reducer
-    }
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE']
+            }
+        })
 })
 
 export const persistor = persistStore(store)

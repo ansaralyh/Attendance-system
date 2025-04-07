@@ -47,6 +47,7 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+    console.log(user)
 
     if (!user) {
       return res.status(404).json({
@@ -62,7 +63,8 @@ export const login = async (req, res) => {
       });
     }
 
-    const token = Jwt.sign({ userEmail: user.email, userRole: user.role }, SECRET, { expiresIn: '1h' });
+    const token = Jwt.sign({ email: user.email, userRole: user.role, id: user._id }, SECRET, { expiresIn: '1h' });
+    console.log(user.role)
 
     res.status(200).json({
       message: "User logged in successfully!",
@@ -81,6 +83,7 @@ export const login = async (req, res) => {
 export const getAllUsers = async (req, res) => {
   try {
     const allUsers = await User.find();
+    // console.log(allUsers)
 
     if (!allUsers) {
       return res.status(404).json({

@@ -65,6 +65,12 @@
 .input-icon1 {
     width: 100%;
 }
+.input-icon select{
+
+    outline: none;
+    border: none;
+    color: #666;
+}
 
 .input-icon1 input {
     width: 100%;

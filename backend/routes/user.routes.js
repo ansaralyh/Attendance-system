@@ -21,23 +21,21 @@ const router = express.Router();
 // Public routes
 router.post("/user", register);
 router.post("/user/login", login);
-
-
-// Protected routes for admin only
-router.get("/admin/countUsers", countUsers);
-router.get("/admin/getAllUsers", authenticateUser, checkUserRole('admin'), getAllUsers);
-
-router.get("/user/getAllUsers", authenticateUser, getAllUsers);
-router.get("/user/getSingleUser/:id", authenticateUser, checkUserRole('user'), getSingleUser);
-router.delete("/user/removeUser/:id", authenticateUser, checkUserRole('admin'), removeUser);
-router.put("/user/updateUser/:id", authenticateUser, updateUser);
-
-//  routes for check-in and check-out
-router.post("/user/checkOut/:id", checkOut);
-router.post("/user/checkIn/:id", checkIn);
-
-
 router.post("/user/forget", forgetPasword);
 router.post('/user/verifyOtp', verifyOtp);
+
+// Protected routes for admin only
+router.get("/admin/countUsers", authenticateUser, checkUserRole('admin'), countUsers);
+router.get("/admin/getAllUsers", authenticateUser, checkUserRole('admin'), getAllUsers);
+router.delete("/user/removeUser/:id", authenticateUser, checkUserRole('admin'), removeUser);
+
+// Protected routes for all authenticated users
+router.get("/user/getAllUsers", authenticateUser, getAllUsers);
+router.get("/user/getSingleUser/:id", authenticateUser, getSingleUser);
+router.put("/user/updateUser/:id", authenticateUser, updateUser);
+
+// Protected routes for check-in and check-out
+router.post("/user/checkOut/:id", authenticateUser, checkOut);
+router.post("/user/checkIn/:id", authenticateUser, checkIn);
 
 export default router;

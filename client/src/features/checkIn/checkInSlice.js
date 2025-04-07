@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-
-
 const initialState = {
     loading: false,
     error: null,
@@ -19,7 +17,12 @@ export const checkInSlice = createSlice({
     name: 'CheckIn',
     initialState,
     reducers: {
-            
+        clearCheckInState: (state) => {
+            state.checkInSuccess = false;
+            state.checkInError = null;
+            state.checkOutSuccess = false;
+            state.checkOutError = null;
+        }
     },
     extraReducers: (builder) => {
         builder.addCase(addCheckIn.pending, (state) => {
@@ -48,93 +51,92 @@ export const checkInSlice = createSlice({
         builder.addCase(addCheckOut.pending, (state) => {
             state.checkOutLoading = true;
         })
-        builder.addCase(addCheckOut.fulfilled, (state, action) => {
+        builder.addCase(addCheckOut.fulfilled, (state) => {
             state.checkOutLoading = false;
-            state.checkOutSuccess = action.payload
+            state.checkOutSuccess = true;
         })
         builder.addCase(addCheckOut.rejected, (state, action) => {
             state.checkOutLoading = false;
             state.checkOutError = action.payload
         })
-
-
     }
 })
 
-export const addCheckIn = createAsyncThunk('addCheckin', async (apiData, { rejectWithValue }) => {
+export const addCheckIn = createAsyncThunk('checkIn/addCheckIn', async (apiData, { rejectWithValue }) => {
     try {
-        if (!apiData.token) {
-            return rejectWithValue("Unauthorized - Please Provide token")
+        const token = localStorage.getItem('token');
+        if (!token) {
+            return rejectWithValue("Unauthorized - Please login again");
         }
         if (!apiData.id) {
-            return rejectWithValue("Please Provide id")
+            return rejectWithValue("Please Provide id");
         }
 
-        const { data } = await axios.post(`http://localhost:4000/api/user/checkIn/${apiData.id}`, {
+        const { data } = await axios.post(`http://localhost:8080/api/user/checkIn/${apiData.id}`, {}, {
             headers: {
-                'Authorization': `Bearer ${apiData.token}`
+                'Authorization': `Bearer ${token}`
             }
-        })
-        // console.log(data)
-        return data
+        });
+        return data;
     } catch (error) {
         if (error?.response?.data?.message) {
-            return rejectWithValue(error?.response?.data?.message)
+            return rejectWithValue(error?.response?.data?.message);
         } else {
-            return rejectWithValue("Some Error occured")
+            return rejectWithValue("Some Error occurred");
         }
     }
-})
-export const addCheckOut = createAsyncThunk('addCheckout', async (apiData, { rejectWithValue }) => {
+});
+
+export const addCheckOut = createAsyncThunk('checkIn/addCheckOut', async (apiData, { rejectWithValue }) => {
     try {
-        if (!apiData.token) {
-            return rejectWithValue("Unauthorized - Please Provide token")
+        const token = localStorage.getItem('token');
+        if (!token) {
+            return rejectWithValue("Unauthorized - Please login again");
         }
         if (!apiData.id) {
-            return rejectWithValue("Please Provide id")
+            return rejectWithValue("Please Provide id");
         }
 
-        console.log(apiData)
-
-        const { data } = await axios.post(`http://localhost:4000/api/user/checkOut/${apiData.id}`, {
+        const { data } = await axios.post(`http://localhost:8080/api/user/checkOut/${apiData.id}`, {}, {
             headers: {
-                'Authorization': `Bearer ${apiData.token}`
+                'Authorization': `Bearer ${token}`
             }
-        })
-        // console.log(data)
-        return data
+        });
+        return data;
     } catch (error) {
-        console.log(error)
         if (error?.response?.data?.message) {
-            return rejectWithValue(error?.response?.data?.message)
+            return rejectWithValue(error?.response?.data?.message);
         } else {
-            return rejectWithValue("Some Error occured")
+            return rejectWithValue("Some Error occurred");
         }
     }
-})
-export const getCheckInOutData = createAsyncThunk('getCheckinout', async (apiData, { rejectWithValue }) => {
+});
+
+export const getCheckInOutData = createAsyncThunk('checkIn/getData', async (apiData, { rejectWithValue }) => {
     try {
-        if (!apiData.token) {
-            return rejectWithValue("Unauthorized - Please Provide token")
+        const token = localStorage.getItem('token');
+        if (!token) {
+            return rejectWithValue("Unauthorized - Please login again");
         }
         if (!apiData.id) {
-            return rejectWithValue("Please Provide id")
+            return rejectWithValue("Please Provide id");
         }
 
-        const { data } = await axios.get(`http://localhost:4000/api/user/getSingleUser/${apiData.id}`, {
+        const { data } = await axios.get(`http://localhost:8080/api/user/getSingleUser/${apiData.id}`, {
             headers: {
-                'Authorization': `Bearer ${apiData.token}`
+                'Authorization': `Bearer ${token}`
             }
-        })
-        // console.log(data)
-        return data
+        });
+        return data;
     } catch (error) {
-        console.log(error)
         if (error?.response?.data?.message) {
-            return rejectWithValue(error?.response?.data?.message)
+            return rejectWithValue(error?.response?.data?.message);
         } else {
-            return rejectWithValue("Some Error occured")
+            return rejectWithValue("Some Error occurred");
         }
     }
-})
+});
+
+export const { clearCheckInState } = checkInSlice.actions;
+export default checkInSlice.reducer;
 

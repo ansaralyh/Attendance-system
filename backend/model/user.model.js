@@ -11,15 +11,17 @@ const userSchema = mongoose.Schema({
     },
     email: {
         type: String,
-        unique: true
+        unique: true,
+        required: true
     },
     password: {
         type: String,
+        required: true
     },
     role: {
         type: String,
-        enum: ['user', 'admin'],
-        default: 'user',
+        enum: ['employee', 'admin'],
+        default: 'employee',
     },
     checkInsAndOuts: [
         {

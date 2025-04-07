@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import router from "./routes/user.routes.js"
 import imageRoute from './routes/image.routes.js'
+import adminRouter from './routes/admin.routes.js'
 import dotenv from 'dotenv';
 import cors from 'cors'
 dotenv.config()
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded({extended:false}))
 app.use("/api", router)
 
 app.use('/api',imageRoute)
+app.use('/api/admin', adminRouter)
 
 // Database connection 
 mongoose.connect("mongodb://127.0.0.1:27017/Haaza-FYP"

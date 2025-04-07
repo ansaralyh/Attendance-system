@@ -26,7 +26,7 @@ export const authenticateUser = (req, res, next) => {
 export const checkUserRole = (roles) => {
     return (req, res, next) => {
         const userRole = req.user && req.user.userRole;
-
+        console.log(userRole)
         if (Array.isArray(roles) && roles.includes(userRole)) {
             next();
         } else if (typeof roles === 'string' && roles === userRole) {

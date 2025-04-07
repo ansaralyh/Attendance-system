@@ -86,13 +86,28 @@ const EmpDashboard = () => {
   }, [navigate, success]);
 
   useEffect(() => {
-    const apiData = {
-      token: user?.token,
-      id: user?.user._id,
-    };
-    dispatch(getCheckInOutData(apiData));
-  }, [dispatch, user?.token, user?.user._id]);
-  // console.log(data.data)
+    if (user?.user?._id) {
+      const apiData = {
+        id: user.user._id
+      };
+      dispatch(getCheckInOutData(apiData));
+    }
+  }, [dispatch, user?.user?._id]);
+
+  const handleCheckIn = () => {
+    if (user?.user?._id) {
+      dispatch(addCheckIn({ id: user.user._id }));
+      dispatch(getCheckInOutData({ id: user.user._id }));
+    }
+  };
+
+  const handleCheckOut = () => {
+    if (user?.user?._id) {
+      dispatch(addCheckOut({ id: user.user._id }));
+      dispatch(getCheckInOutData({ id: user.user._id }));
+    }
+  };
+
   return (
     <div className="adminDashboard">
       <div className="container">
@@ -123,34 +138,10 @@ const EmpDashboard = () => {
                 <p className="current-date">{formattedDate}</p>
               </div>
               <div className="checkInOut">
-                <button
-                  onClick={() => {
-                    dispatch(
-                      addCheckIn({ token: user?.token, id: user?.user._id })
-                    );
-                    dispatch(
-                      getCheckInOutData({
-                        token: user?.token,
-                        id: user?.user._id,
-                      })
-                    );
-                  }}
-                >
+                <button onClick={handleCheckIn}>
                   {checkInLoading ? "Loading..." : "Check In"}
                 </button>
-                <button
-                  onClick={() => {
-                    dispatch(
-                      addCheckOut({ token: user?.token, id: user?.user._id })
-                    );
-                    dispatch(
-                      getCheckInOutData({
-                        token: user?.token,
-                        id: user?.user._id,
-                      })
-                    );
-                  }}
-                >
+                <button onClick={handleCheckOut}>
                   {checkOutLoading ? "Loading..." : "Check Out"}
                 </button>
               </div>
